@@ -35,6 +35,9 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
 	private List<BookLoan> bookLoans;
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Token> tokens;
 
 	public User(String username, String email, String name, String password) {
 		super();
@@ -95,4 +98,13 @@ public class User {
 	public void setBookLoans(List<BookLoan> bookLoans) {
 		this.bookLoans = bookLoans;
 	}
+
+	public List<Token> getTokens() {
+		return tokens;
+	}
+
+	public void setTokens(List<Token> tokens) {
+		this.tokens = tokens;
+	}
+	
 }

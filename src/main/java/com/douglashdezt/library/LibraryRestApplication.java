@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@SpringBootApplication
+/*@SpringBootApplication
 @Configuration
 @EnableWebSecurity
 public class LibraryRestApplication extends WebSecurityConfigurerAdapter{
@@ -30,5 +30,17 @@ public class LibraryRestApplication extends WebSecurityConfigurerAdapter{
 			.httpBasic().and().csrf().disable()
 			.authorizeRequests()
 				.antMatchers("/**").permitAll();
+	}
+}*/
+
+@SpringBootApplication
+public class LibraryRestApplication{
+	public static void main(String[] args) {
+		SpringApplication.run(LibraryRestApplication.class, args);
+	}
+
+    @Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }

@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.douglashdezt.library.models.dtos.LoginDTO;
 import com.douglashdezt.library.models.dtos.MessageDTO;
+import com.douglashdezt.library.models.dtos.TokenDTO;
 import com.douglashdezt.library.models.dtos.UserInfo;
 import com.douglashdezt.library.models.entities.User;
 import com.douglashdezt.library.services.UserService;
+import com.douglashdezt.library.utils.TokenManager;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,6 +25,9 @@ public class AuthController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	TokenManager tokenManager;
  
 	@PostMapping("/signup")
 	public ResponseEntity<MessageDTO> registerUser(@Valid UserInfo userInfo, BindingResult result) {
@@ -58,6 +64,46 @@ public class AuthController {
 						HttpStatus.INTERNAL_SERVER_ERROR
 					);
 		}
+	}
+	
+	
+	
+	@PostMapping("/signin")
+	private ResponseEntity<TokenDTO> login(@Valid LoginDTO loginInfo, BindingResult result) {
+	    try {
+	        
+	        if(result.hasErrors()) {
+	            return new ResponseEntity<>(
+	                    new TokenDTO(""),
+	                    HttpStatus.BAD_REQUEST
+	                );
+	        }
+	        
+	        User user = userService.findOneByIdentifer(loginInfo.getIdentifier());
+	        
+	        if(!userService.comparePassword(user, loginInfo.getPassword())) {
+	            return new ResponseEntity<>(
+	                    new TokenDTO(""),
+	                    HttpStatus.UNAUTHORIZED
+	                );
+	        }
+	        
+	        final String token = tokenManager.generateJwtToken(user.getUsername());
+	        
+	        userService.insertToken(user, token); 
+	        
+	        return new ResponseEntity<>(
+	                    new TokenDTO(token),
+	                    HttpStatus.CREATED
+	                );
+	        
+	    } catch (Exception e) {
+	        System.out.println(e.getMessage());
+	        return new ResponseEntity<>(
+	                new TokenDTO(""),
+	                HttpStatus.INTERNAL_SERVER_ERROR
+	            );
+	    }
 	}
 	
 }

@@ -12,4 +12,5 @@ public interface UserService {
 	User findOneByIdentifer(String identifier) throws Exception;
 	User findOneByUsernameAndEmail(String username, String email) throws Exception;
 	Boolean comparePassword(User user, String passToCompare) throws Exception;
+	void insertToken(User user, String token);
 }
